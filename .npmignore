@@ -1,0 +1,26 @@
+# Configuration
+.github
+.vscode
+.editorconfig
+.gitignore
+.gitattributes
+eslint.config.js
+tsup.config.ts
+tsconfig.json
+bun.lockb
+pnpm-lock.yaml
+yarn.lock
+
+# Dependencies
+node_modules
+
+# Source code
+src
+
+# Markdown
+CHANGELOG.md
+
+# Temp files
+*.log
+.eslint-config-inspector
+.cache
