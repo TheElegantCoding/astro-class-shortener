@@ -16,7 +16,7 @@ const DOM_RESERVED = [
 const transformCSSContent = (cssContent: string, classMap: Record<string, string>): string =>
   cssContent.replaceAll(/([^{}]+)({)/g, (_value, sel, brace) => selectorParser((selectors) => {
     selectors.walk((node) => {
-      if ((node.type === 'class' || node.type === 'id') && classMap[node.value]) {
+      if ((node.type === 'class') && classMap[node.value]) {
         node.value = classMap[node.value] as string;
       }
     });
@@ -27,7 +27,7 @@ const replaceInCSS = (filePath: string, classMap: Record<string, string>) => {
   const newContent = content.replaceAll(/([^{}]+)({)/g, (_value, sel: string, brace) => selectorParser((selectors) => {
     selectors.walk((node) => {
       const originalValue = node.value as string;
-      if ((node.type === 'class' || node.type === 'id') && classMap[originalValue]) {
+      if ((node.type === 'class') && classMap[originalValue]) {
         node.value = classMap[originalValue];
       }
     });
@@ -48,9 +48,10 @@ const replaceInHTML = (filePath: string, classMap: Record<string, string>) => {
 
   const sortedKeys = Object.keys(classMap).toSorted((first, second) => second.length - first.length);
   sortedKeys.forEach((longName) => {
-    const shortName = classMap[longName];
-    const regex = new RegExp(String.raw`(["'\s\.])(${longName})(["'\s])`, 'g');
-    content = content.replace(regex, `$1${shortName}$3`);
+    const shortName = classMap[longName] as string;
+
+    const classAttributeRegex = new RegExp(String.raw`(?<=class=["']|\s|\.)\b${longName}\b(?=["'\s])`, 'g');
+    content = content.replace(classAttributeRegex, shortName);
   });
 
   fs.writeFileSync(filePath, content);
