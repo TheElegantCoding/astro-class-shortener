@@ -17,13 +17,13 @@ const processSelectors = (cssFiles: string[], htmlFiles: string[], jsFiles: stri
   return allSelectors;
 };
 
-const processBuild = (directory: URL, options: OptionType) => {
+const processBuild = (directory: URL, options?: OptionType) => {
   const distributionPath = fileURLToPath(directory);
   const jsonPath = path.join(distributionPath, 'class_map.json');
   const { cssFiles, htmlFiles, jsFiles } = getFilesByExtension(distributionPath);
   const allSelectors = processSelectors(cssFiles, htmlFiles, jsFiles);
 
-  if (options.exclude) {
+  if (options?.exclude) {
     options.exclude.forEach((selector) => allSelectors.delete(selector));
   }
 
