@@ -19,12 +19,12 @@
 <br />
 
 <div align="center">
-  <img src="./asset/illustration/astro_badget.svg" height="28px" />&nbsp;&nbsp;&nbsp;
-  <img src="./asset/illustration/bun_badget.svg" height="28px" />&nbsp;&nbsp;&nbsp;
-  <img src="./asset/illustration/node_badget.svg" height="28px" />&nbsp;&nbsp;&nbsp;
-  <img src="./asset/illustration/typescript_badget.svg" height="28px" />&nbsp;&nbsp;&nbsp;
-  <img src="./asset/illustration/npm_badget.svg" height="28px" />&nbsp;&nbsp;&nbsp;
-  <img src="./asset/illustration/git_badget.svg" height="28px" />
+  <img src="./asset/illustration/astro_badget.svg" height="36px" />&nbsp;&nbsp;&nbsp;
+  <img src="./asset/illustration/bun_badget.svg" height="36px" />&nbsp;&nbsp;&nbsp;
+  <img src="./asset/illustration/node_badget.svg" height="36px" />&nbsp;&nbsp;&nbsp;
+  <img src="./asset/illustration/typescript_badget.svg" height="36px" />&nbsp;&nbsp;&nbsp;
+  <img src="./asset/illustration/npm_badget.svg" height="36px" />&nbsp;&nbsp;&nbsp;
+  <img src="./asset/illustration/git_badget.svg" height="36px" />
 </div>
 
 <br />
