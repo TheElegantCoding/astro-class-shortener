@@ -1,5 +1,5 @@
 {
-  "name": "astro-class-shortener",
+  "name": "astro-class-shortener-",
   "description": "📦",
   "author": {
     "name": "Luis Monsalve <TheElegantCoding>",
@@ -33,11 +33,13 @@
     "test-vite": "vite build --config test/vite.config.ts",
     "build": "tsup"
   },
+  "dependencies": {
+    "postcss-selector-parser": "7.1.1"
+  },
   "devDependencies": {
-    "@types/node": "^25.5.0",
-    "astro": "^6.1.0",
-    "eslint-config-universal-code": "1.0.1",
-    "postcss-selector-parser": "^7.1.1",
+    "@types/node": "25.5.0",
+    "astro": "6.1.1",
+    "eslint-config-universal-code": "^1.0.3",
     "tsup": "8.5.1",
     "typescript": "5.9.3"
   }
