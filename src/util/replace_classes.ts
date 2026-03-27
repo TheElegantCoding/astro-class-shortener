@@ -70,8 +70,22 @@ const replaceInJS = (content: string, classMap: Record<string, string>) => {
   return updatedContent;
 };
 
+const replaceClassesAndWriteMap = (
+  cssFiles: string[],
+  htmlFiles: string[],
+  jsFiles: string[],
+  classMap: Record<string, string>,
+  jsonPath: string
+) => {
+  cssFiles.forEach((file) => { replaceInCSS(file, classMap); });
+  htmlFiles.forEach((file) => { replaceInHTML(file, classMap); });
+  jsFiles.forEach((file) => { replaceInJS(file, classMap); });
+  fs.writeFileSync(jsonPath, JSON.stringify(classMap, null, 2));
+};
+
 export {
   replaceInJS,
   replaceInCSS,
-  replaceInHTML
+  replaceInHTML,
+  replaceClassesAndWriteMap
 };
