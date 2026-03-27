@@ -1,5 +1,5 @@
 type OptionType = {
-  dev: boolean;
+  exclude?: string[];
 };
 
 export type { OptionType };
