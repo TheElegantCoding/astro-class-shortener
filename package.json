@@ -1,15 +1,25 @@
 {
   "name": "astro-class-shortener",
-  "description": "📦",
+  "description": "📦 Astro integration to minify and mangle CSS class names across HTML, CSS, and JS files. Boost performance by reducing payload size and obfuscate your source code structure.",
   "author": {
     "name": "Luis Monsalve <TheElegantCoding>",
     "email": "luismonsalve1941@gmail.com"
   },
-  "version": "0.0.2",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TheElegantCoding/astro-class-shortener.git"
   },
+  "keywords": [
+    "javascript",
+    "astro",
+    "integration",
+    "astro-integration",
+    "bun",
+    "typescript",
+    "clean-code",
+    "javascript"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -30,7 +40,6 @@
     "preinstall": "npx only-allow bun",
     "watch": "tsup --watch",
     "lint": "eslint . --fix ",
-    "test-vite": "vite build --config test/vite.config.ts",
     "build": "tsup"
   },
   "dependencies": {
