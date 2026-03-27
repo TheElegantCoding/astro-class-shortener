@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 import { createClassMap } from './util/class_map';
 import { findAllFiles } from './util/file';
-import { replaceInCSS, replaceInHTML } from './util/replace_classes';
+import { replaceInJS, replaceInCSS, replaceInHTML } from './util/replace_classes';
 import { scanForSelectors } from './util/scan_classes';
 
 import type { AstroIntegration } from 'astro';
@@ -29,11 +29,13 @@ const processSelectors = (cssFiles: string[], htmlFiles: string[], jsFiles: stri
 const replaceClassesAndWriteMap = (
   cssFiles: string[],
   htmlFiles: string[],
+  jsFiles: string[],
   classMap: Record<string, string>,
   jsonPath: string
 ) => {
   cssFiles.forEach((file) => { replaceInCSS(file, classMap); });
   htmlFiles.forEach((file) => { replaceInHTML(file, classMap); });
+  jsFiles.forEach((file) => { replaceInJS(file, classMap); });
   fs.writeFileSync(jsonPath, JSON.stringify(classMap, null, 2));
 };
 
@@ -47,6 +49,7 @@ const processBuild = (directory: URL) => {
   replaceClassesAndWriteMap(
     cssFiles,
     htmlFiles,
+    jsFiles,
     classMap,
     jsonPath
   );
