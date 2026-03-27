@@ -1,4 +1,3 @@
-/* eslint-disable ts/strict-boolean-expressions */
 import fs from 'node:fs';
 import selectorParser from 'postcss-selector-parser';
 
