@@ -7,7 +7,7 @@ const scanCSSSelectors = (content: string, selectorSet: Set<string>) => {
 
   const scanner = selectorParser((selectors) => {
     selectors.walk((node) => {
-      if (node.type === 'class' || node.type === 'id') {
+      if (node.type === 'class') {
         selectorSet.add(node.value);
       }
     });
