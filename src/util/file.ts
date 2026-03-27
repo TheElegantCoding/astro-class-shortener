@@ -10,4 +10,11 @@ const findAllFiles = (extension: string, directory = 'public') => {
   return result;
 };
 
-export { findAllFiles };
+const getFilesByExtension = (distributionPath: string) => {
+  const cssFiles = findAllFiles('.css', distributionPath);
+  const htmlFiles = findAllFiles('.html', distributionPath);
+  const jsFiles = findAllFiles('.js', distributionPath);
+  return { cssFiles, htmlFiles, jsFiles };
+};
+
+export { findAllFiles, getFilesByExtension };
