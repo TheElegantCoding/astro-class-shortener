@@ -1,11 +1,11 @@
 {
-  "name": "astro-class-shortener-",
+  "name": "astro-class-shortener",
   "description": "📦",
   "author": {
     "name": "Luis Monsalve <TheElegantCoding>",
     "email": "luismonsalve1941@gmail.com"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TheElegantCoding/astro-class-shortener.git"
@@ -39,7 +39,7 @@
   "devDependencies": {
     "@types/node": "25.5.0",
     "astro": "6.1.1",
-    "eslint-config-universal-code": "^1.0.3",
+    "eslint-config-universal-code": "^1.0.4",
     "tsup": "8.5.1",
     "typescript": "5.9.3"
   }
