@@ -1,9 +1,10 @@
-import { createClassMap } from '@src/util/class_map';
-import { getFilesByExtension } from '@src/util/file';
-import { replaceClassesAndWriteMap } from '@src/util/replace_classes';
-import { scanForSelectors } from '@src/util/scan_classes';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { createClassMap } from './class_map';
+import { getFilesByExtension } from './file';
+import { replaceClassesAndWriteMap } from './replace_classes';
+import { scanForSelectors } from './scan_classes';
 
 import type { OptionType } from '@src/type/option_type';
 

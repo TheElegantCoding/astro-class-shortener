@@ -47,9 +47,12 @@
   },
   "devDependencies": {
     "@types/node": "25.5.0",
+    "acorn": "^8.16.0",
     "astro": "6.1.1",
     "eslint-config-universal-code": "^1.0.4",
+    "node-html-parser": "^7.1.0",
     "tsup": "8.5.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vite": "^8.0.3"
   }
 }

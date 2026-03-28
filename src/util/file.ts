@@ -13,7 +13,7 @@ const findAllFiles = (extension: string, directory = 'public') => {
 const getFilesByExtension = (distributionPath: string) => {
   const cssFiles = findAllFiles('.css', distributionPath);
   const htmlFiles = findAllFiles('.html', distributionPath);
-  const jsFiles = findAllFiles('.js', distributionPath);
+  const jsFiles = findAllFiles('.js', distributionPath).filter((file) => !file.includes('~partytown'));
   return { cssFiles, htmlFiles, jsFiles };
 };
 
