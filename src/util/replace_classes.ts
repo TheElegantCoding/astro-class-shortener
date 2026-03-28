@@ -1,91 +1,109 @@
+/* eslint-disable ts/no-dynamic-delete */
+/* eslint-disable no-param-reassign */
+import { processJSContent } from '@src/util/process';
+import { generateShortName } from '@src/util/shortener';
+import { parse } from 'node-html-parser';
 import fs from 'node:fs';
+import postcss from 'postcss';
 import selectorParser from 'postcss-selector-parser';
 
-const DOM_RESERVED = [
-  'scroll',
-  'click',
-  'DOMContentLoaded',
-  'hashchange',
-  'resize',
-  'submit',
-  'touchstart',
-  'html',
-  'body'
-];
+import type { ReplaceClassType } from '@src/type/replace_class_type';
 
-const transformCSSContent = (cssContent: string, classMap: Record<string, string>): string =>
-  cssContent.replaceAll(/([^{}]+)({)/g, (_value, sel, brace) => selectorParser((selectors) => {
-    selectors.walk((node) => {
-      if ((node.type === 'class') && classMap[node.value]) {
-        node.value = classMap[node.value] as string;
+const replaceCss = (cssFile: postcss.Root, cssJsonMap: Record<string, string>) => {
+  let globalIndex = 0;
+
+  cssFile.walkRules((rule) => {
+    const selector = selectorParser((selectors) => {
+      selectors.walk((node) => {
+        if (node.type === 'class') {
+          const originalName = node.value;
+
+          if (!cssJsonMap[originalName]) {
+            cssJsonMap[originalName] = generateShortName(globalIndex);
+            globalIndex++;
+          }
+
+          node.value = cssJsonMap[originalName];
+        }
+      });
+    }).processSync(rule.selector);
+    rule.selector = selector;
+  });
+};
+
+const replaceHtml = (htmlContent: string, cssJsonMap: Record<string, string>): string => {
+  const root = parse(htmlContent);
+  const elements = root.querySelectorAll('*');
+  const scripts = root.querySelectorAll('script');
+
+  elements.forEach((element) => {
+    const attributeNames = element.attributes;
+
+    Object.keys(attributeNames).forEach((item) => {
+      if (item === 'class') {
+        const classAttribute = attributeNames[item];
+        if (classAttribute) {
+          const classNames = classAttribute.split(/\s+/);
+          element.setAttribute('class', classNames.map((name) => cssJsonMap[name] ?? name).join(' '));
+        }
+      }
+
+      if (item.startsWith('data-')) {
+        const attributeValue = attributeNames[item];
+        if (attributeValue) {
+          const names = attributeValue.split(/\s+/);
+          element.setAttribute(item, names.map((name) => cssJsonMap[name] ?? name).join(' '));
+        }
       }
     });
-  }).processSync(sel as string) + brace);
-
-const replaceInCSS = (filePath: string, classMap: Record<string, string>) => {
-  const content = fs.readFileSync(filePath, 'utf8');
-  const newContent = content.replaceAll(/([^{}]+)({)/g, (_value, sel: string, brace) => selectorParser((selectors) => {
-    selectors.walk((node) => {
-      const originalValue = node.value as string;
-      if ((node.type === 'class') && classMap[originalValue]) {
-        node.value = classMap[originalValue];
-      }
-    });
-  })
-    .processSync(sel) + brace);
-  fs.writeFileSync(filePath, newContent);
-};
-
-const replaceInHTML = (filePath: string, classMap: Record<string, string>) => {
-  let content = fs.readFileSync(filePath, 'utf8');
-
-  content = content.replaceAll(/(<style[^>]*>)([\S\s]*?)(<\/style>)/gi, (
-    _value,
-    open,
-    css,
-    close
-  ) => open + transformCSSContent(css as string, classMap) + close);
-
-  const sortedKeys = Object.keys(classMap).toSorted((first, second) => second.length - first.length);
-  sortedKeys.forEach((longName) => {
-    const shortName = classMap[longName] as string;
-
-    const classAttributeRegex = new RegExp(String.raw`(?<=class=["']|\s|\.)\b${longName}\b(?=["'\s])`, 'g');
-    content = content.replace(classAttributeRegex, shortName);
   });
 
-  fs.writeFileSync(filePath, content);
-};
-
-const replaceInJS = (content: string, classMap: Record<string, string>) => {
-  let updatedContent = content;
-
-  Object.entries(classMap).forEach(([original, short]) => {
-    if (DOM_RESERVED.includes(original)) { return; }
-
-    const regex = new RegExp(String.raw`(?<=['".])\b${original}\b(?=['" ])`, 'g');
-    updatedContent = updatedContent.replace(regex, short);
+  scripts.forEach((node) => {
+    const isPartyTown = node.innerHTML.includes('partytown');
+    if (isPartyTown) { return; }
+    const result = processJSContent(node.innerHTML, cssJsonMap);
+    node.set_content(result);
   });
 
-  return updatedContent;
+  return root.toString();
 };
 
-const replaceClassesAndWriteMap = (
-  cssFiles: string[],
-  htmlFiles: string[],
-  jsFiles: string[],
-  classMap: Record<string, string>,
-  jsonPath: string
-) => {
-  cssFiles.forEach((file) => { replaceInCSS(file, classMap); });
-  htmlFiles.forEach((file) => { replaceInHTML(file, classMap); });
-  jsFiles.forEach((file) => { replaceInJS(file, classMap); });
-  fs.writeFileSync(jsonPath, JSON.stringify(classMap, null, 2));
+const replaceClasses = ({
+  cssFiles,
+  htmlFiles,
+  jsFiles,
+  cssJsonMap,
+  excludedClasses,
+  distributionPath
+}: ReplaceClassType) => {
+  cssFiles.forEach((file) => {
+    const content = fs.readFileSync(file, 'utf8');
+    const cssFile = postcss.parse(content);
+    replaceCss(cssFile, cssJsonMap);
+
+    fs.writeFileSync(file, cssFile.toResult().css);
+    if (distributionPath) {
+      fs.writeFileSync(`${distributionPath}/css_json_map.json`, JSON.stringify(cssJsonMap, null, 2));
+    }
+  });
+
+  if (excludedClasses.length > 0) {
+    excludedClasses.forEach((className) => { delete cssJsonMap[className]; });
+  }
+
+  htmlFiles.forEach((file) => {
+    const content = fs.readFileSync(file, 'utf8');
+    const updatedContent = replaceHtml(content, cssJsonMap);
+
+    fs.writeFileSync(file, updatedContent, 'utf8');
+  });
+
+  jsFiles.forEach((file) => {
+    const content = fs.readFileSync(file, 'utf8');
+    const updatedContent = processJSContent(content, cssJsonMap);
+
+    fs.writeFileSync(file, updatedContent, 'utf8');
+  });
 };
 
-export {
-  replaceInJS,
-  replaceInCSS,
-  replaceInHTML,
-  replaceClassesAndWriteMap
-};
+export { replaceCss, replaceHtml, replaceClasses };
