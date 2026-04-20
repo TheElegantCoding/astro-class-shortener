@@ -10,6 +10,7 @@
     },
     "resolveJsonModule": true,
     "strict": true,
+    "ignoreDeprecations": "6.0",
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
@@ -38,6 +39,10 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    "eslint.config.js",
+    "tsup.config.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }
