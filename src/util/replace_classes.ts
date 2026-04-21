@@ -1,5 +1,4 @@
-/* eslint-disable ts/no-dynamic-delete */
-/* eslint-disable no-param-reassign */
+import { logger, loggerLoader } from '@src/util/logger';
 import { processJSContent } from '@src/util/process';
 import { generateShortName } from '@src/util/shortener';
 import { parse } from 'node-html-parser';
@@ -11,6 +10,8 @@ import type { ReplaceClassType } from '@src/type/replace_class_type';
 
 const replaceCss = (cssFile: postcss.Root, cssJsonMap: Record<string, string>) => {
   let globalIndex = 0;
+  const loader = loggerLoader('Replacing CSS classes');
+  loader.start();
 
   cssFile.walkRules((rule) => {
     const selector = selectorParser((selectors) => {
@@ -29,12 +30,16 @@ const replaceCss = (cssFile: postcss.Root, cssJsonMap: Record<string, string>) =
     }).processSync(rule.selector);
     rule.selector = selector;
   });
+
+  loader.stop();
 };
 
 const replaceHtml = (htmlContent: string, cssJsonMap: Record<string, string>): string => {
   const root = parse(htmlContent);
   const elements = root.querySelectorAll('*');
   const scripts = root.querySelectorAll('script');
+  const loader = loggerLoader('Replacing HTML classes');
+  loader.start();
 
   elements.forEach((element) => {
     const attributeNames = element.attributes;
@@ -44,7 +49,7 @@ const replaceHtml = (htmlContent: string, cssJsonMap: Record<string, string>): s
         const classAttribute = attributeNames[item];
         if (classAttribute) {
           const classNames = classAttribute.split(/\s+/);
-          element.setAttribute('class', classNames.map((name) => cssJsonMap[name] ?? name).join(' '));
+          element.setAttribute('class', classNames.map((name) => { return cssJsonMap[name] ?? name; }).join(' '));
         }
       }
 
@@ -52,7 +57,7 @@ const replaceHtml = (htmlContent: string, cssJsonMap: Record<string, string>): s
         const attributeValue = attributeNames[item];
         if (attributeValue) {
           const names = attributeValue.split(/\s+/);
-          element.setAttribute(item, names.map((name) => cssJsonMap[name] ?? name).join(' '));
+          element.setAttribute(item, names.map((name) => { return cssJsonMap[name] ?? name; }).join(' '));
         }
       }
     });
@@ -65,6 +70,7 @@ const replaceHtml = (htmlContent: string, cssJsonMap: Record<string, string>): s
     node.set_content(result);
   });
 
+  loader.stop();
   return root.toString();
 };
 
@@ -98,12 +104,18 @@ const replaceClasses = ({
     fs.writeFileSync(file, updatedContent, 'utf8');
   });
 
+  const loader = loggerLoader('Replacing classes in JS files');
+  loader.start();
+
   jsFiles.forEach((file) => {
     const content = fs.readFileSync(file, 'utf8');
     const updatedContent = processJSContent(content, cssJsonMap);
 
     fs.writeFileSync(file, updatedContent, 'utf8');
   });
+
+  loader.stop();
+  logger.success('All classes have been replaced successfully!');
 };
 
 export { replaceCss, replaceHtml, replaceClasses };
