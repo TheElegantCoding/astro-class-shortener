@@ -2,8 +2,7 @@
   "name": "astro-class-shortener",
   "description": "📦 Astro integration to minify and mangle CSS class names across HTML, CSS, and JS files. Boost performance by reducing payload size and obfuscate your source code structure.",
   "author": {
-    "name": "Luis Monsalve <TheElegantCoding>",
-    "email": "luismonsalve1941@gmail.com"
+    "name": "Luis Monsalve"
   },
   "version": "1.0.3",
   "repository": {
@@ -38,6 +37,8 @@
   },
   "scripts": {
     "preinstall": "npx only-allow bun",
+    "postinstall": "bunx gitlys init",
+    "release": "bunx gitlys release",
     "watch": "tsup --watch",
     "lint": "eslint . --fix ",
     "build": "tsup"
@@ -46,13 +47,15 @@
     "postcss-selector-parser": "7.1.1"
   },
   "devDependencies": {
-    "@types/node": "25.5.0",
+    "@types/node": "25.6.0",
     "acorn": "^8.16.0",
-    "astro": "6.1.1",
-    "eslint-config-universal-code": "^1.0.4",
+    "astro": "6.1.8",
+    "eslint-config-universal-code": "^1.0.13",
+    "gitlys": "^1.1.5",
+    "logginlys": "^3.0.2",
     "node-html-parser": "^7.1.0",
     "tsup": "8.5.1",
     "typescript": "5.9.3",
-    "vite": "^8.0.3"
+    "vite": "^8.0.8"
   }
 }
