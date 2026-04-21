@@ -9,8 +9,8 @@
       "@src/*": ["src/*"]
     },
     "resolveJsonModule": true,
+    "types": ["node"],
     "strict": true,
-    "ignoreDeprecations": "6.0",
     "strictBindCallApply": true,
     "strictFunctionTypes": true,
     "strictNullChecks": true,
